@@ -15,6 +15,7 @@ import { SidebarMobile } from './sidebar-mobile'
 import { SidebarToggle } from './sidebar-toggle'
 import { ChatHistory } from './chat-history'
 import { Session } from '@/lib/types'
+import Image from 'next/image'
 
 async function UserOrLogin() {
   const session = (await auth()) as Session
@@ -57,22 +58,13 @@ export function Header() {
       </div>
       <div className="flex items-center justify-end space-x-2">
         <a
-          target="_blank"
-          href="https://github.com/vercel/nextjs-ai-chatbot/"
-          rel="noopener noreferrer"
-          className={cn(buttonVariants({ variant: 'outline' }))}
-        >
-          <IconGitHub />
-          <span className="hidden ml-2 md:flex">GitHub</span>
-        </a>
-        <a
-          href="https://vercel.com/templates/Next.js/nextjs-ai-chatbot"
+          href="https://link-health.org"
           target="_blank"
           className={cn(buttonVariants())}
         >
-          <IconVercel className="mr-2" />
-          <span className="hidden sm:block">Deploy to Vercel</span>
-          <span className="sm:hidden">Deploy</span>
+        <Image alt='link-health-logo' src={"https://i0.wp.com/link-health.org/wp-content/uploads/2023/10/Link-Health-Logo1.png?fit=360%2C360&ssl=1"} height={30} width={30}/>
+          <span className="hidden sm:block">Link Health</span>
+          <span className="sm:hidden">Link Health</span>
         </a>
       </div>
     </header>

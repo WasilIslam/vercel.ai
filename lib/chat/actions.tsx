@@ -130,20 +130,25 @@ async function submitUserMessage(content: string) {
     model: openai('gpt-3.5-turbo'),
     initial: <SpinnerMessage />,
     system: `\
-    You are a stock trading conversation bot and you can help users buy stocks, step by step.
-    You and the user can discuss stock prices and the user can adjust the amount of stocks they want to buy, or place an order, in the UI.
-    
-    Messages inside [] means that it's a UI element or a user event. For example:
-    - "[Price of AAPL = 100]" means that an interface of the stock price of AAPL is shown to the user.
-    - "[User has changed the amount of AAPL to 10]" means that the user has changed the amount of AAPL to 10 in the UI.
-    
-    If the user requests purchasing a stock, call \`show_stock_purchase_ui\` to show the purchase UI.
-    If the user just wants the price, call \`show_stock_price\` to show the price.
-    If you want to show trending stocks, call \`list_stocks\`.
-    If you want to show events, call \`get_events\`.
-    If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
-    
-    Besides that, you can also chat with users and do some calculations if needed.`,
+Greet the user and offer the following programs to choose from:
+
+SNAP (Supplemental Nutrition Assistance Program)
+WIC (Women, Infants, and Children)
+Lifeline (Low income )
+Ask relevant questions based on the selected program:
+
+For SNAP: "Do you have Medicaid or MassHealth?"
+For WIC: "Are you a pregnant mother, postpartum, or do you have a child under 5?"
+For Lifeline: "Do you have Medicaid or MassHealth?"
+After verification is done, provide if they are eligible or not, also provide the program's application link regardless:
+
+SNAP: internal_link.com/snap
+WIC: internal_link.com/wic
+Lifeline: internal_link.com/lifeline
+Only use information from the provided files. If the answer is not found in the files, simply state: "I don't have any information about that."
+
+Always perform a file search for each query and never use external sources or links outside the PDFs.
+    `,
     messages: [
       ...aiState.get().messages.map((message: any) => ({
         role: message.role,
@@ -177,304 +182,369 @@ async function submitUserMessage(content: string) {
       return textNode
     },
     tools: {
-      listStocks: {
-        description: 'List three imaginary stocks that are trending.',
-        parameters: z.object({
-          stocks: z.array(
-            z.object({
-              symbol: z.string().describe('The symbol of the stock'),
-              price: z.number().describe('The price of the stock'),
-              delta: z.number().describe('The change in price of the stock')
-            })
-          )
-        }),
-        generate: async function* ({ stocks }) {
-          yield (
-            <BotCard>
-              <StocksSkeleton />
-            </BotCard>
-          )
+      // listStocks: {
+      //   description: 'List three imaginary stocks that are trending.',
+      //   parameters: z.object({
+      //     stocks: z.array(
+      //       z.object({
+      //         symbol: z.string().describe('The symbol of the stock'),
+      //         price: z.number().describe('The price of the stock'),
+      //         delta: z.number().describe('The change in price of the stock')
+      //       })
+      //     )
+      //   }),
+      //   generate: async function* ({ stocks }) {
+      //     yield (
+      //       <BotCard>
+      //         <StocksSkeleton />
+      //       </BotCard>
+      //     )
 
-          await sleep(1000)
+      //     await sleep(1000)
 
-          const toolCallId = nanoid()
+      //     const toolCallId = nanoid()
 
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'listStocks',
-                    toolCallId,
-                    args: { stocks }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'listStocks',
-                    toolCallId,
-                    result: stocks
-                  }
-                ]
-              }
-            ]
-          })
+      //     aiState.done({
+      //       ...aiState.get(),
+      //       messages: [
+      //         ...aiState.get().messages,
+      //         {
+      //           id: nanoid(),
+      //           role: 'assistant',
+      //           content: [
+      //             {
+      //               type: 'tool-call',
+      //               toolName: 'listStocks',
+      //               toolCallId,
+      //               args: { stocks }
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           id: nanoid(),
+      //           role: 'tool',
+      //           content: [
+      //             {
+      //               type: 'tool-result',
+      //               toolName: 'listStocks',
+      //               toolCallId,
+      //               result: stocks
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     })
 
-          return (
-            <BotCard>
-              <Stocks props={stocks} />
-            </BotCard>
-          )
-        }
-      },
-      showStockPrice: {
-        description:
-          'Get the current stock price of a given stock or currency. Use this to show the price to the user.',
-        parameters: z.object({
-          symbol: z
-            .string()
-            .describe(
-              'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
-            ),
-          price: z.number().describe('The price of the stock.'),
-          delta: z.number().describe('The change in price of the stock')
-        }),
-        generate: async function* ({ symbol, price, delta }) {
-          yield (
-            <BotCard>
-              <StockSkeleton />
-            </BotCard>
-          )
+      //     return (
+      //       <BotCard>
+      //         <Stocks props={stocks} />
+      //       </BotCard>
+      //     )
+      //   }
+      // },
+      // showStockPrice: {
+      //   description:
+      //     'Get the current stock price of a given stock or currency. Use this to show the price to the user.',
+      //   parameters: z.object({
+      //     symbol: z
+      //       .string()
+      //       .describe(
+      //         'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
+      //       ),
+      //     price: z.number().describe('The price of the stock.'),
+      //     delta: z.number().describe('The change in price of the stock')
+      //   }),
+      //   generate: async function* ({ symbol, price, delta }) {
+      //     yield (
+      //       <BotCard>
+      //         <StockSkeleton />
+      //       </BotCard>
+      //     )
 
-          await sleep(1000)
+      //     await sleep(1000)
 
-          const toolCallId = nanoid()
+      //     const toolCallId = nanoid()
 
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'showStockPrice',
-                    toolCallId,
-                    args: { symbol, price, delta }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'showStockPrice',
-                    toolCallId,
-                    result: { symbol, price, delta }
-                  }
-                ]
-              }
-            ]
-          })
+      //     aiState.done({
+      //       ...aiState.get(),
+      //       messages: [
+      //         ...aiState.get().messages,
+      //         {
+      //           id: nanoid(),
+      //           role: 'assistant',
+      //           content: [
+      //             {
+      //               type: 'tool-call',
+      //               toolName: 'showStockPrice',
+      //               toolCallId,
+      //               args: { symbol, price, delta }
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           id: nanoid(),
+      //           role: 'tool',
+      //           content: [
+      //             {
+      //               type: 'tool-result',
+      //               toolName: 'showStockPrice',
+      //               toolCallId,
+      //               result: { symbol, price, delta }
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     })
 
-          return (
-            <BotCard>
-              <Stock props={{ symbol, price, delta }} />
-            </BotCard>
-          )
-        }
-      },
-      showStockPurchase: {
-        description:
-          'Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency.',
-        parameters: z.object({
-          symbol: z
-            .string()
-            .describe(
-              'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
-            ),
-          price: z.number().describe('The price of the stock.'),
-          numberOfShares: z
-            .number()
-            .optional()
-            .describe(
-              'The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it.'
-            )
-        }),
-        generate: async function* ({ symbol, price, numberOfShares = 100 }) {
-          const toolCallId = nanoid()
+      //     return (
+      //       <BotCard>
+      //         <Stock props={{ symbol, price, delta }} />
+      //       </BotCard>
+      //     )
+      //   }
+      // },
+      // showStockPurchase: {
+      //   description:
+      //     'Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency.',
+      //   parameters: z.object({
+      //     symbol: z
+      //       .string()
+      //       .describe(
+      //         'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
+      //       ),
+      //     price: z.number().describe('The price of the stock.'),
+      //     numberOfShares: z
+      //       .number()
+      //       .optional()
+      //       .describe(
+      //         'The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it.'
+      //       )
+      //   }),
+      //   generate: async function* ({ symbol, price, numberOfShares = 100 }) {
+      //     const toolCallId = nanoid()
 
-          if (numberOfShares <= 0 || numberOfShares > 1000) {
-            aiState.done({
-              ...aiState.get(),
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content: [
-                    {
-                      type: 'tool-call',
-                      toolName: 'showStockPurchase',
-                      toolCallId,
-                      args: { symbol, price, numberOfShares }
-                    }
-                  ]
-                },
-                {
-                  id: nanoid(),
-                  role: 'tool',
-                  content: [
-                    {
-                      type: 'tool-result',
-                      toolName: 'showStockPurchase',
-                      toolCallId,
-                      result: {
-                        symbol,
-                        price,
-                        numberOfShares,
-                        status: 'expired'
-                      }
-                    }
-                  ]
-                },
-                {
-                  id: nanoid(),
-                  role: 'system',
-                  content: `[User has selected an invalid amount]`
-                }
-              ]
-            })
+      //     if (numberOfShares <= 0 || numberOfShares > 1000) {
+      //       aiState.done({
+      //         ...aiState.get(),
+      //         messages: [
+      //           ...aiState.get().messages,
+      //           {
+      //             id: nanoid(),
+      //             role: 'assistant',
+      //             content: [
+      //               {
+      //                 type: 'tool-call',
+      //                 toolName: 'showStockPurchase',
+      //                 toolCallId,
+      //                 args: { symbol, price, numberOfShares }
+      //               }
+      //             ]
+      //           },
+      //           {
+      //             id: nanoid(),
+      //             role: 'tool',
+      //             content: [
+      //               {
+      //                 type: 'tool-result',
+      //                 toolName: 'showStockPurchase',
+      //                 toolCallId,
+      //                 result: {
+      //                   symbol,
+      //                   price,
+      //                   numberOfShares,
+      //                   status: 'expired'
+      //                 }
+      //               }
+      //             ]
+      //           },
+      //           {
+      //             id: nanoid(),
+      //             role: 'system',
+      //             content: `[User has selected an invalid amount]`
+      //           }
+      //         ]
+      //       })
 
-            return <BotMessage content={'Invalid amount'} />
-          } else {
-            aiState.done({
-              ...aiState.get(),
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content: [
-                    {
-                      type: 'tool-call',
-                      toolName: 'showStockPurchase',
-                      toolCallId,
-                      args: { symbol, price, numberOfShares }
-                    }
-                  ]
-                },
-                {
-                  id: nanoid(),
-                  role: 'tool',
-                  content: [
-                    {
-                      type: 'tool-result',
-                      toolName: 'showStockPurchase',
-                      toolCallId,
-                      result: {
-                        symbol,
-                        price,
-                        numberOfShares
-                      }
-                    }
-                  ]
-                }
-              ]
-            })
+      //       return <BotMessage content={'Invalid amount'} />
+      //     } else {
+      //       aiState.done({
+      //         ...aiState.get(),
+      //         messages: [
+      //           ...aiState.get().messages,
+      //           {
+      //             id: nanoid(),
+      //             role: 'assistant',
+      //             content: [
+      //               {
+      //                 type: 'tool-call',
+      //                 toolName: 'showStockPurchase',
+      //                 toolCallId,
+      //                 args: { symbol, price, numberOfShares }
+      //               }
+      //             ]
+      //           },
+      //           {
+      //             id: nanoid(),
+      //             role: 'tool',
+      //             content: [
+      //               {
+      //                 type: 'tool-result',
+      //                 toolName: 'showStockPurchase',
+      //                 toolCallId,
+      //                 result: {
+      //                   symbol,
+      //                   price,
+      //                   numberOfShares
+      //                 }
+      //               }
+      //             ]
+      //           }
+      //         ]
+      //       })
 
-            return (
-              <BotCard>
-                <Purchase
-                  props={{
-                    numberOfShares,
-                    symbol,
-                    price: +price,
-                    status: 'requires_action'
-                  }}
-                />
-              </BotCard>
-            )
-          }
-        }
-      },
-      getEvents: {
-        description:
-          'List funny imaginary events between user highlighted dates that describe stock activity.',
-        parameters: z.object({
-          events: z.array(
-            z.object({
-              date: z
-                .string()
-                .describe('The date of the event, in ISO-8601 format'),
-              headline: z.string().describe('The headline of the event'),
-              description: z.string().describe('The description of the event')
-            })
-          )
-        }),
-        generate: async function* ({ events }) {
-          yield (
-            <BotCard>
-              <EventsSkeleton />
-            </BotCard>
-          )
+      //       return (
+      //         <BotCard>
+      //           <Purchase
+      //             props={{
+      //               numberOfShares,
+      //               symbol,
+      //               price: +price,
+      //               status: 'requires_action'
+      //             }}
+      //           />
+      //         </BotCard>
+      //       )
+      //     }
+      //   }
+      // },
+      // getGrants: {
+      //   description:
+      //     'Fetch information about specific government assistance grants such as SNAP, WIC, and Lifeline based on user criteria.',
+      //   parameters: z.object({
+      //     grants: z.array(
+      //       z.object({
+      //         name: z.string().describe('The name of the grant'),
+      //         description: z
+      //           .string()
+      //           .describe('A brief description of the grant'),
+      //         eligibility: z
+      //           .string()
+      //           .describe('Eligibility criteria for the grant'),
+      //         applicationUrl: z
+      //           .string()
+      //           .describe(
+      //             'The URL to apply or get more information about the grant'
+      //           )
+      //       })
+      //     )
+      //   }),
+      //   generate: async function* ({ grants }) {
+      //     // Display loading state with Tailwind styling
+      //     yield (
+      //       <div className="flex justify-center items-center h-48">
+      //         <p className="text-lg font-semibold text-gray-500">
+      //           Loading grant information...
+      //         </p>
+      //       </div>
+      //     )
 
-          await sleep(1000)
+      //     // Simulate a delay (e.g., fetching from an API)
+      //     await new Promise(resolve => setTimeout(resolve, 1000))
 
-          const toolCallId = nanoid()
+      //     const toolCallId = nanoid()
 
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'getEvents',
-                    toolCallId,
-                    args: { events }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'getEvents',
-                    toolCallId,
-                    result: events
-                  }
-                ]
-              }
-            ]
-          })
+      //     // Hardcoded grant data with internal links
+      //     const grantList = [
+      //       {
+      //         name: 'SNAP',
+      //         description:
+      //           'Supplemental Nutrition Assistance Program provides food-purchasing assistance for low- and no-income people.',
+      //         eligibility: 'Low-income individuals and families',
+      //         applicationUrl: 'internal_link.com/snap'
+      //       },
+      //       {
+      //         name: 'WIC',
+      //         description:
+      //           'Women, Infants, and Children program provides assistance to pregnant women, new mothers, and children under 5.',
+      //         eligibility:
+      //           'Pregnant women, breastfeeding mothers, and children under 5 from low-income households',
+      //         applicationUrl: 'internal_link.com/wic'
+      //       },
+      //       {
+      //         name: 'Lifeline',
+      //         description:
+      //           'Lifeline provides discounted phone and internet services for low-income households.',
+      //         eligibility: 'Low-income individuals',
+      //         applicationUrl: 'internal_link.com/lifeline'
+      //       }
+      //     ]
 
-          return (
-            <BotCard>
-              <Events props={events} />
-            </BotCard>
-          )
-        }
-      }
+      //     // Update the AI state with the grant information
+      //     aiState.done({
+      //       ...aiState.get(),
+      //       messages: [
+      //         ...aiState.get().messages,
+      //         {
+      //           id: nanoid(),
+      //           role: 'assistant',
+      //           content: [
+      //             {
+      //               type: 'tool-call',
+      //               toolName: 'getGrants',
+      //               toolCallId,
+      //               args: { grants: grantList }
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           id: nanoid(),
+      //           role: 'tool',
+      //           content: [
+      //             {
+      //               type: 'tool-result',
+      //               toolName: 'getGrants',
+      //               toolCallId,
+      //               result: grantList
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     })
+
+      //     // Render the grant information with Tailwind CSS for good UI
+      //     return (
+      //       <div className="max-w-4xl mx-auto p-4">
+      //         <h2 className="text-2xl font-bold text-gray-800 mb-4">
+      //           Available Grants
+      //         </h2>
+      //         <div className="grid gap-6">
+      //           {grantList.map(grant => (
+      //             <div
+      //               key={grant.name}
+      //               className="p-6 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+      //             >
+      //               <h3 className="text-xl font-semibold text-gray-900">
+      //                 {grant.name}
+      //               </h3>
+      //               <p className="text-gray-700 mt-2">{grant.description}</p>
+      //               <p className="text-gray-600 mt-1">
+      //                 <strong>Eligibility:</strong> {grant.eligibility}
+      //               </p>
+      //               <a
+      //                 href={grant.applicationUrl}
+      //                 target="_blank"
+      //                 rel="noopener noreferrer"
+      //                 className="inline-block mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300"
+      //               >
+      //                 Apply Here
+      //               </a>
+      //             </div>
+      //           ))}
+      //         </div>
+      //       </div>
+      //     )
+      //   }
+      // }
     }
   })
 
