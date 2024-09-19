@@ -1,5 +1,5 @@
 import 'server-only'
-
+import programs from "@/assets/other_programs.json"
 import {
   createAI,
   createStreamableUI,
@@ -145,9 +145,10 @@ After verification is done, provide if they are eligible or not, also provide th
 SNAP: internal_link.com/snap
 WIC: internal_link.com/wic
 Lifeline: internal_link.com/lifeline
-Only use information from the provided files. If the answer is not found in the files, simply state: "I don't have any information about that."
 
-Always perform a file search for each query and never use external sources or links outside the PDFs.
+
+If the question is about another program and not about snap wic or lifeline. Answer this based on the array only in simple text: ${JSON.stringify(programs)}
+Finally, keep responses short interesting and engaging and return the response is a formatted way.
     `,
     messages: [
       ...aiState.get().messages.map((message: any) => ({
@@ -181,371 +182,528 @@ Always perform a file search for each query and never use external sources or li
 
       return textNode
     },
-    tools: {
-      // listStocks: {
-      //   description: 'List three imaginary stocks that are trending.',
-      //   parameters: z.object({
-      //     stocks: z.array(
-      //       z.object({
-      //         symbol: z.string().describe('The symbol of the stock'),
-      //         price: z.number().describe('The price of the stock'),
-      //         delta: z.number().describe('The change in price of the stock')
-      //       })
-      //     )
-      //   }),
-      //   generate: async function* ({ stocks }) {
-      //     yield (
-      //       <BotCard>
-      //         <StocksSkeleton />
-      //       </BotCard>
-      //     )
+    // tools: {
+    //   get_other_program_details: {
+    //     description: 'Get program details by name.',
+    //     parameters: z.object({
+    //       programName: z.string().describe('The name of the program not applicable on snap, wic and lifeline'),
+    //       question:z.string().describe("The question asked by the user")
+    //     }),
+    //     generate: async function* ({ programName }) {
+    //       // Inline ProgramSkeleton component
+    //       const ProgramSkeleton = () => {
+    //         return (
+    //           <div className="skeleton-container">
+    //             <div
+    //               className="skeleton-title"
+    //               style={{
+    //                 width: '200px',
+    //                 height: '20px',
+    //                 backgroundColor: '#ddd',
+    //                 margin: '10px 0'
+    //               }}
+    //             />
+    //             <div
+    //               className="skeleton-text"
+    //               style={{
+    //                 width: '100%',
+    //                 height: '15px',
+    //                 backgroundColor: '#eee',
+    //                 margin: '8px 0'
+    //               }}
+    //             />
+    //             <div
+    //               className="skeleton-text"
+    //               style={{
+    //                 width: '90%',
+    //                 height: '15px',
+    //                 backgroundColor: '#eee',
+    //                 margin: '8px 0'
+    //               }}
+    //             />
+    //             <div
+    //               className="skeleton-text"
+    //               style={{
+    //                 width: '85%',
+    //                 height: '15px',
+    //                 backgroundColor: '#eee',
+    //                 margin: '8px 0'
+    //               }}
+    //             />
+    //             <div
+    //               className="skeleton-text"
+    //               style={{
+    //                 width: '80%',
+    //                 height: '15px',
+    //                 backgroundColor: '#eee',
+    //                 margin: '8px 0'
+    //               }}
+    //             />
+    //           </div>
+    //         )
+    //       }
 
-      //     await sleep(1000)
+    //       // Inline ProgramDetails component
+    //       const ProgramDetails = ({ program }) => {
+    //         return (
+    //           <div className="program-details">
+    //             <h2>{program.program}</h2>
+    //             <p>{program.description}</p>
 
-      //     const toolCallId = nanoid()
+    //             <h3>Benefits:</h3>
+    //             <ul>
+    //               {program.benefits.map((benefit, index) => (
+    //                 <li key={index}>{benefit}</li>
+    //               ))}
+    //             </ul>
 
-      //     aiState.done({
-      //       ...aiState.get(),
-      //       messages: [
-      //         ...aiState.get().messages,
-      //         {
-      //           id: nanoid(),
-      //           role: 'assistant',
-      //           content: [
-      //             {
-      //               type: 'tool-call',
-      //               toolName: 'listStocks',
-      //               toolCallId,
-      //               args: { stocks }
-      //             }
-      //           ]
-      //         },
-      //         {
-      //           id: nanoid(),
-      //           role: 'tool',
-      //           content: [
-      //             {
-      //               type: 'tool-result',
-      //               toolName: 'listStocks',
-      //               toolCallId,
-      //               result: stocks
-      //             }
-      //           ]
-      //         }
-      //       ]
-      //     })
+    //             <h3>Contact Information:</h3>
+    //             <p>Agency: {program.contact_info.agency}</p>
+    //             <p>Phone: {program.contact_info.phone}</p>
 
-      //     return (
-      //       <BotCard>
-      //         <Stocks props={stocks} />
-      //       </BotCard>
-      //     )
-      //   }
-      // },
-      // showStockPrice: {
-      //   description:
-      //     'Get the current stock price of a given stock or currency. Use this to show the price to the user.',
-      //   parameters: z.object({
-      //     symbol: z
-      //       .string()
-      //       .describe(
-      //         'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
-      //       ),
-      //     price: z.number().describe('The price of the stock.'),
-      //     delta: z.number().describe('The change in price of the stock')
-      //   }),
-      //   generate: async function* ({ symbol, price, delta }) {
-      //     yield (
-      //       <BotCard>
-      //         <StockSkeleton />
-      //       </BotCard>
-      //     )
+    //             <h3>Links to Apply:</h3>
+    //             <ul>
+    //               {program.links_to_apply.map((link, index) => (
+    //                 <li key={index}>
+    //                   <a href={link} target="_blank" rel="noopener noreferrer">
+    //                     {link}
+    //                   </a>
+    //                 </li>
+    //               ))}
+    //             </ul>
 
-      //     await sleep(1000)
+    //             <h3>Eligibility Criteria:</h3>
+    //             <ul>
+    //               {program.eligibility_criteria.map((criteria, index) => (
+    //                 <li key={index}>{criteria}</li>
+    //               ))}
+    //             </ul>
+    //           </div>
+    //         )
+    //       }
 
-      //     const toolCallId = nanoid()
+    //       yield <ProgramSkeleton />
 
-      //     aiState.done({
-      //       ...aiState.get(),
-      //       messages: [
-      //         ...aiState.get().messages,
-      //         {
-      //           id: nanoid(),
-      //           role: 'assistant',
-      //           content: [
-      //             {
-      //               type: 'tool-call',
-      //               toolName: 'showStockPrice',
-      //               toolCallId,
-      //               args: { symbol, price, delta }
-      //             }
-      //           ]
-      //         },
-      //         {
-      //           id: nanoid(),
-      //           role: 'tool',
-      //           content: [
-      //             {
-      //               type: 'tool-result',
-      //               toolName: 'showStockPrice',
-      //               toolCallId,
-      //               result: { symbol, price, delta }
-      //             }
-      //           ]
-      //         }
-      //       ]
-      //     })
+    //       await sleep(1000)
 
-      //     return (
-      //       <BotCard>
-      //         <Stock props={{ symbol, price, delta }} />
-      //       </BotCard>
-      //     )
-      //   }
-      // },
-      // showStockPurchase: {
-      //   description:
-      //     'Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency.',
-      //   parameters: z.object({
-      //     symbol: z
-      //       .string()
-      //       .describe(
-      //         'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
-      //       ),
-      //     price: z.number().describe('The price of the stock.'),
-      //     numberOfShares: z
-      //       .number()
-      //       .optional()
-      //       .describe(
-      //         'The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it.'
-      //       )
-      //   }),
-      //   generate: async function* ({ symbol, price, numberOfShares = 100 }) {
-      //     const toolCallId = nanoid()
+    //       const toolCallId = nanoid()
+    //       const program = programs.find(p => 
+    //         p.program.toLowerCase().includes(programName.toLowerCase())
+    //       );
 
-      //     if (numberOfShares <= 0 || numberOfShares > 1000) {
-      //       aiState.done({
-      //         ...aiState.get(),
-      //         messages: [
-      //           ...aiState.get().messages,
-      //           {
-      //             id: nanoid(),
-      //             role: 'assistant',
-      //             content: [
-      //               {
-      //                 type: 'tool-call',
-      //                 toolName: 'showStockPurchase',
-      //                 toolCallId,
-      //                 args: { symbol, price, numberOfShares }
-      //               }
-      //             ]
-      //           },
-      //           {
-      //             id: nanoid(),
-      //             role: 'tool',
-      //             content: [
-      //               {
-      //                 type: 'tool-result',
-      //                 toolName: 'showStockPurchase',
-      //                 toolCallId,
-      //                 result: {
-      //                   symbol,
-      //                   price,
-      //                   numberOfShares,
-      //                   status: 'expired'
-      //                 }
-      //               }
-      //             ]
-      //           },
-      //           {
-      //             id: nanoid(),
-      //             role: 'system',
-      //             content: `[User has selected an invalid amount]`
-      //           }
-      //         ]
-      //       })
+    //       if (!program) {
+    //         aiState.done({
+    //           ...aiState.get(),
+    //           messages: [
+    //             ...aiState.get().messages,
+    //             {
+    //               id: nanoid(),
+    //               role: 'assistant',
+    //               content: `No program found with the name "${programName}". Please try again.`
+    //             }
+    //           ]
+    //         })
+    //         return
+    //       }
 
-      //       return <BotMessage content={'Invalid amount'} />
-      //     } else {
-      //       aiState.done({
-      //         ...aiState.get(),
-      //         messages: [
-      //           ...aiState.get().messages,
-      //           {
-      //             id: nanoid(),
-      //             role: 'assistant',
-      //             content: [
-      //               {
-      //                 type: 'tool-call',
-      //                 toolName: 'showStockPurchase',
-      //                 toolCallId,
-      //                 args: { symbol, price, numberOfShares }
-      //               }
-      //             ]
-      //           },
-      //           {
-      //             id: nanoid(),
-      //             role: 'tool',
-      //             content: [
-      //               {
-      //                 type: 'tool-result',
-      //                 toolName: 'showStockPurchase',
-      //                 toolCallId,
-      //                 result: {
-      //                   symbol,
-      //                   price,
-      //                   numberOfShares
-      //                 }
-      //               }
-      //             ]
-      //           }
-      //         ]
-      //       })
+    //       aiState.done({
+    //         ...aiState.get(),
+    //         messages: [
+    //           ...aiState.get().messages,
+    //           {
+    //             id: nanoid(),
+    //             role: 'assistant',
+    //             content: [
+    //               {
+    //                 type: 'tool-call',
+    //                 toolName: 'get_other_program_details',
+    //                 toolCallId,
+    //                 args: { programName }
+    //               }
+    //             ]
+    //           },
+    //           {
+    //             id: nanoid(),
+    //             role: 'tool',
+    //             content: [
+    //               {
+    //                 type: 'tool-result',
+    //                 toolName: 'get_other_program_details',
+    //                 toolCallId,
+    //                 result: program
+    //               }
+    //             ]
+    //           }
+    //         ]
+    //       })
 
-      //       return (
-      //         <BotCard>
-      //           <Purchase
-      //             props={{
-      //               numberOfShares,
-      //               symbol,
-      //               price: +price,
-      //               status: 'requires_action'
-      //             }}
-      //           />
-      //         </BotCard>
-      //       )
-      //     }
-      //   }
-      // },
-      // getGrants: {
-      //   description:
-      //     'Fetch information about specific government assistance grants such as SNAP, WIC, and Lifeline based on user criteria.',
-      //   parameters: z.object({
-      //     grants: z.array(
-      //       z.object({
-      //         name: z.string().describe('The name of the grant'),
-      //         description: z
-      //           .string()
-      //           .describe('A brief description of the grant'),
-      //         eligibility: z
-      //           .string()
-      //           .describe('Eligibility criteria for the grant'),
-      //         applicationUrl: z
-      //           .string()
-      //           .describe(
-      //             'The URL to apply or get more information about the grant'
-      //           )
-      //       })
-      //     )
-      //   }),
-      //   generate: async function* ({ grants }) {
-      //     // Display loading state with Tailwind styling
-      //     yield (
-      //       <div className="flex justify-center items-center h-48">
-      //         <p className="text-lg font-semibold text-gray-500">
-      //           Loading grant information...
-      //         </p>
-      //       </div>
-      //     )
+    //       return <ProgramDetails program={program} />
+    //     }
+    //   }
+    //   // listStocks: {
+    //   //   description: 'List three imaginary stocks that are trending.',
+    //   //   parameters: z.object({
+    //   //     stocks: z.array(
+    //   //       z.object({
+    //   //         symbol: z.string().describe('The symbol of the stock'),
+    //   //         price: z.number().describe('The price of the stock'),
+    //   //         delta: z.number().describe('The change in price of the stock')
+    //   //       })
+    //   //     )
+    //   //   }),
+    //   //   generate: async function* ({ stocks }) {
+    //   //     yield (
+    //   //       <BotCard>
+    //   //         <StocksSkeleton />
+    //   //       </BotCard>
+    //   //     )
 
-      //     // Simulate a delay (e.g., fetching from an API)
-      //     await new Promise(resolve => setTimeout(resolve, 1000))
+    //   //     await sleep(1000)
 
-      //     const toolCallId = nanoid()
+    //   //     const toolCallId = nanoid()
 
-      //     // Hardcoded grant data with internal links
-      //     const grantList = [
-      //       {
-      //         name: 'SNAP',
-      //         description:
-      //           'Supplemental Nutrition Assistance Program provides food-purchasing assistance for low- and no-income people.',
-      //         eligibility: 'Low-income individuals and families',
-      //         applicationUrl: 'internal_link.com/snap'
-      //       },
-      //       {
-      //         name: 'WIC',
-      //         description:
-      //           'Women, Infants, and Children program provides assistance to pregnant women, new mothers, and children under 5.',
-      //         eligibility:
-      //           'Pregnant women, breastfeeding mothers, and children under 5 from low-income households',
-      //         applicationUrl: 'internal_link.com/wic'
-      //       },
-      //       {
-      //         name: 'Lifeline',
-      //         description:
-      //           'Lifeline provides discounted phone and internet services for low-income households.',
-      //         eligibility: 'Low-income individuals',
-      //         applicationUrl: 'internal_link.com/lifeline'
-      //       }
-      //     ]
+    //   //     aiState.done({
+    //   //       ...aiState.get(),
+    //   //       messages: [
+    //   //         ...aiState.get().messages,
+    //   //         {
+    //   //           id: nanoid(),
+    //   //           role: 'assistant',
+    //   //           content: [
+    //   //             {
+    //   //               type: 'tool-call',
+    //   //               toolName: 'listStocks',
+    //   //               toolCallId,
+    //   //               args: { stocks }
+    //   //             }
+    //   //           ]
+    //   //         },
+    //   //         {
+    //   //           id: nanoid(),
+    //   //           role: 'tool',
+    //   //           content: [
+    //   //             {
+    //   //               type: 'tool-result',
+    //   //               toolName: 'listStocks',
+    //   //               toolCallId,
+    //   //               result: stocks
+    //   //             }
+    //   //           ]
+    //   //         }
+    //   //       ]
+    //   //     })
 
-      //     // Update the AI state with the grant information
-      //     aiState.done({
-      //       ...aiState.get(),
-      //       messages: [
-      //         ...aiState.get().messages,
-      //         {
-      //           id: nanoid(),
-      //           role: 'assistant',
-      //           content: [
-      //             {
-      //               type: 'tool-call',
-      //               toolName: 'getGrants',
-      //               toolCallId,
-      //               args: { grants: grantList }
-      //             }
-      //           ]
-      //         },
-      //         {
-      //           id: nanoid(),
-      //           role: 'tool',
-      //           content: [
-      //             {
-      //               type: 'tool-result',
-      //               toolName: 'getGrants',
-      //               toolCallId,
-      //               result: grantList
-      //             }
-      //           ]
-      //         }
-      //       ]
-      //     })
+    //   //     return (
+    //   //       <BotCard>
+    //   //         <Stocks props={stocks} />
+    //   //       </BotCard>
+    //   //     )
+    //   //   }
+    //   // },
+    //   // showStockPrice: {
+    //   //   description:
+    //   //     'Get the current stock price of a given stock or currency. Use this to show the price to the user.',
+    //   //   parameters: z.object({
+    //   //     symbol: z
+    //   //       .string()
+    //   //       .describe(
+    //   //         'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
+    //   //       ),
+    //   //     price: z.number().describe('The price of the stock.'),
+    //   //     delta: z.number().describe('The change in price of the stock')
+    //   //   }),
+    //   //   generate: async function* ({ symbol, price, delta }) {
+    //   //     yield (
+    //   //       <BotCard>
+    //   //         <StockSkeleton />
+    //   //       </BotCard>
+    //   //     )
 
-      //     // Render the grant information with Tailwind CSS for good UI
-      //     return (
-      //       <div className="max-w-4xl mx-auto p-4">
-      //         <h2 className="text-2xl font-bold text-gray-800 mb-4">
-      //           Available Grants
-      //         </h2>
-      //         <div className="grid gap-6">
-      //           {grantList.map(grant => (
-      //             <div
-      //               key={grant.name}
-      //               className="p-6 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-      //             >
-      //               <h3 className="text-xl font-semibold text-gray-900">
-      //                 {grant.name}
-      //               </h3>
-      //               <p className="text-gray-700 mt-2">{grant.description}</p>
-      //               <p className="text-gray-600 mt-1">
-      //                 <strong>Eligibility:</strong> {grant.eligibility}
-      //               </p>
-      //               <a
-      //                 href={grant.applicationUrl}
-      //                 target="_blank"
-      //                 rel="noopener noreferrer"
-      //                 className="inline-block mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300"
-      //               >
-      //                 Apply Here
-      //               </a>
-      //             </div>
-      //           ))}
-      //         </div>
-      //       </div>
-      //     )
-      //   }
-      // }
-    }
+    //   //     await sleep(1000)
+
+    //   //     const toolCallId = nanoid()
+
+    //   //     aiState.done({
+    //   //       ...aiState.get(),
+    //   //       messages: [
+    //   //         ...aiState.get().messages,
+    //   //         {
+    //   //           id: nanoid(),
+    //   //           role: 'assistant',
+    //   //           content: [
+    //   //             {
+    //   //               type: 'tool-call',
+    //   //               toolName: 'showStockPrice',
+    //   //               toolCallId,
+    //   //               args: { symbol, price, delta }
+    //   //             }
+    //   //           ]
+    //   //         },
+    //   //         {
+    //   //           id: nanoid(),
+    //   //           role: 'tool',
+    //   //           content: [
+    //   //             {
+    //   //               type: 'tool-result',
+    //   //               toolName: 'showStockPrice',
+    //   //               toolCallId,
+    //   //               result: { symbol, price, delta }
+    //   //             }
+    //   //           ]
+    //   //         }
+    //   //       ]
+    //   //     })
+
+    //   //     return (
+    //   //       <BotCard>
+    //   //         <Stock props={{ symbol, price, delta }} />
+    //   //       </BotCard>
+    //   //     )
+    //   //   }
+    //   // },
+    //   // showStockPurchase: {
+    //   //   description:
+    //   //     'Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency.',
+    //   //   parameters: z.object({
+    //   //     symbol: z
+    //   //       .string()
+    //   //       .describe(
+    //   //         'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.'
+    //   //       ),
+    //   //     price: z.number().describe('The price of the stock.'),
+    //   //     numberOfShares: z
+    //   //       .number()
+    //   //       .optional()
+    //   //       .describe(
+    //   //         'The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it.'
+    //   //       )
+    //   //   }),
+    //   //   generate: async function* ({ symbol, price, numberOfShares = 100 }) {
+    //   //     const toolCallId = nanoid()
+
+    //   //     if (numberOfShares <= 0 || numberOfShares > 1000) {
+    //   //       aiState.done({
+    //   //         ...aiState.get(),
+    //   //         messages: [
+    //   //           ...aiState.get().messages,
+    //   //           {
+    //   //             id: nanoid(),
+    //   //             role: 'assistant',
+    //   //             content: [
+    //   //               {
+    //   //                 type: 'tool-call',
+    //   //                 toolName: 'showStockPurchase',
+    //   //                 toolCallId,
+    //   //                 args: { symbol, price, numberOfShares }
+    //   //               }
+    //   //             ]
+    //   //           },
+    //   //           {
+    //   //             id: nanoid(),
+    //   //             role: 'tool',
+    //   //             content: [
+    //   //               {
+    //   //                 type: 'tool-result',
+    //   //                 toolName: 'showStockPurchase',
+    //   //                 toolCallId,
+    //   //                 result: {
+    //   //                   symbol,
+    //   //                   price,
+    //   //                   numberOfShares,
+    //   //                   status: 'expired'
+    //   //                 }
+    //   //               }
+    //   //             ]
+    //   //           },
+    //   //           {
+    //   //             id: nanoid(),
+    //   //             role: 'system',
+    //   //             content: `[User has selected an invalid amount]`
+    //   //           }
+    //   //         ]
+    //   //       })
+
+    //   //       return <BotMessage content={'Invalid amount'} />
+    //   //     } else {
+    //   //       aiState.done({
+    //   //         ...aiState.get(),
+    //   //         messages: [
+    //   //           ...aiState.get().messages,
+    //   //           {
+    //   //             id: nanoid(),
+    //   //             role: 'assistant',
+    //   //             content: [
+    //   //               {
+    //   //                 type: 'tool-call',
+    //   //                 toolName: 'showStockPurchase',
+    //   //                 toolCallId,
+    //   //                 args: { symbol, price, numberOfShares }
+    //   //               }
+    //   //             ]
+    //   //           },
+    //   //           {
+    //   //             id: nanoid(),
+    //   //             role: 'tool',
+    //   //             content: [
+    //   //               {
+    //   //                 type: 'tool-result',
+    //   //                 toolName: 'showStockPurchase',
+    //   //                 toolCallId,
+    //   //                 result: {
+    //   //                   symbol,
+    //   //                   price,
+    //   //                   numberOfShares
+    //   //                 }
+    //   //               }
+    //   //             ]
+    //   //           }
+    //   //         ]
+    //   //       })
+
+    //   //       return (
+    //   //         <BotCard>
+    //   //           <Purchase
+    //   //             props={{
+    //   //               numberOfShares,
+    //   //               symbol,
+    //   //               price: +price,
+    //   //               status: 'requires_action'
+    //   //             }}
+    //   //           />
+    //   //         </BotCard>
+    //   //       )
+    //   //     }
+    //   //   }
+    //   // },
+    //   // getGrants: {
+    //   //   description:
+    //   //     'Fetch information about specific government assistance grants such as SNAP, WIC, and Lifeline based on user criteria.',
+    //   //   parameters: z.object({
+    //   //     grants: z.array(
+    //   //       z.object({
+    //   //         name: z.string().describe('The name of the grant'),
+    //   //         description: z
+    //   //           .string()
+    //   //           .describe('A brief description of the grant'),
+    //   //         eligibility: z
+    //   //           .string()
+    //   //           .describe('Eligibility criteria for the grant'),
+    //   //         applicationUrl: z
+    //   //           .string()
+    //   //           .describe(
+    //   //             'The URL to apply or get more information about the grant'
+    //   //           )
+    //   //       })
+    //   //     )
+    //   //   }),
+    //   //   generate: async function* ({ grants }) {
+    //   //     // Display loading state with Tailwind styling
+    //   //     yield (
+    //   //       <div className="flex justify-center items-center h-48">
+    //   //         <p className="text-lg font-semibold text-gray-500">
+    //   //           Loading grant information...
+    //   //         </p>
+    //   //       </div>
+    //   //     )
+
+    //   //     // Simulate a delay (e.g., fetching from an API)
+    //   //     await new Promise(resolve => setTimeout(resolve, 1000))
+
+    //   //     const toolCallId = nanoid()
+
+    //   //     // Hardcoded grant data with internal links
+    //   //     const grantList = [
+    //   //       {
+    //   //         name: 'SNAP',
+    //   //         description:
+    //   //           'Supplemental Nutrition Assistance Program provides food-purchasing assistance for low- and no-income people.',
+    //   //         eligibility: 'Low-income individuals and families',
+    //   //         applicationUrl: 'internal_link.com/snap'
+    //   //       },
+    //   //       {
+    //   //         name: 'WIC',
+    //   //         description:
+    //   //           'Women, Infants, and Children program provides assistance to pregnant women, new mothers, and children under 5.',
+    //   //         eligibility:
+    //   //           'Pregnant women, breastfeeding mothers, and children under 5 from low-income households',
+    //   //         applicationUrl: 'internal_link.com/wic'
+    //   //       },
+    //   //       {
+    //   //         name: 'Lifeline',
+    //   //         description:
+    //   //           'Lifeline provides discounted phone and internet services for low-income households.',
+    //   //         eligibility: 'Low-income individuals',
+    //   //         applicationUrl: 'internal_link.com/lifeline'
+    //   //       }
+    //   //     ]
+
+    //   //     // Update the AI state with the grant information
+    //   //     aiState.done({
+    //   //       ...aiState.get(),
+    //   //       messages: [
+    //   //         ...aiState.get().messages,
+    //   //         {
+    //   //           id: nanoid(),
+    //   //           role: 'assistant',
+    //   //           content: [
+    //   //             {
+    //   //               type: 'tool-call',
+    //   //               toolName: 'getGrants',
+    //   //               toolCallId,
+    //   //               args: { grants: grantList }
+    //   //             }
+    //   //           ]
+    //   //         },
+    //   //         {
+    //   //           id: nanoid(),
+    //   //           role: 'tool',
+    //   //           content: [
+    //   //             {
+    //   //               type: 'tool-result',
+    //   //               toolName: 'getGrants',
+    //   //               toolCallId,
+    //   //               result: grantList
+    //   //             }
+    //   //           ]
+    //   //         }
+    //   //       ]
+    //   //     })
+
+    //   //     // Render the grant information with Tailwind CSS for good UI
+    //   //     return (
+    //   //       <div className="max-w-4xl mx-auto p-4">
+    //   //         <h2 className="text-2xl font-bold text-gray-800 mb-4">
+    //   //           Available Grants
+    //   //         </h2>
+    //   //         <div className="grid gap-6">
+    //   //           {grantList.map(grant => (
+    //   //             <div
+    //   //               key={grant.name}
+    //   //               className="p-6 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+    //   //             >
+    //   //               <h3 className="text-xl font-semibold text-gray-900">
+    //   //                 {grant.name}
+    //   //               </h3>
+    //   //               <p className="text-gray-700 mt-2">{grant.description}</p>
+    //   //               <p className="text-gray-600 mt-1">
+    //   //                 <strong>Eligibility:</strong> {grant.eligibility}
+    //   //               </p>
+    //   //               <a
+    //   //                 href={grant.applicationUrl}
+    //   //                 target="_blank"
+    //   //                 rel="noopener noreferrer"
+    //   //                 className="inline-block mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300"
+    //   //               >
+    //   //                 Apply Here
+    //   //               </a>
+    //   //             </div>
+    //   //           ))}
+    //   //         </div>
+    //   //       </div>
+    //   //     )
+    //   //   }
+    //   // }
+    // }
   })
 
   return {
