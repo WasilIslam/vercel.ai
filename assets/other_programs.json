@@ -1,0 +1,201 @@
+[
+    {
+      "program": "TAFDC",
+      "description": "Transitional Aid to Families with Dependent Children provides monthly cash payments to very low-income families.",
+      "benefits": [
+        "Monthly cash payments based on family size and income.",
+        "Access to job search assistance through JobQuest."
+      ],
+      "contact_info": {
+        "agency": "Massachusetts Department of Transitional Assistance (DTA)",
+        "phone": "1-800-249-2007"
+      },
+      "links_to_apply": [
+        "https://www.mass.gov/how-to/apply-for-tafdc",
+        "https://dtaconnect.eohhs.mass.gov/"
+      ],
+      "eligibility_criteria": [
+        "Have children 18 or younger, or are pregnant and due in less than 4 months.",
+        "Massachusetts resident.",
+        "Income must be below the TAFDC limit based on family size and housing type."
+      ]
+    },
+    {
+      "program": "EITC",
+      "description": "The Earned Income Tax Credit (EITC) is a tax credit for low to moderate-income workers.",
+      "benefits": [
+        "Reduces your tax bill or provides a refund based on your income and number of children.",
+        "Massachusetts residents may receive additional state credits."
+      ],
+      "contact_info": {
+        "agency": "IRS and Mass. Department of Revenue",
+        "phone": "1-800-829-1040 (IRS)"
+      },
+      "links_to_apply": [
+        "https://www.irs.gov/credits-deductions/individuals/earned-income-tax-credit-eitc",
+        "https://www.mass.gov/info-details/earned-income-tax-credit-eitc"
+      ],
+      "eligibility_criteria": [
+        "Must have earned income.",
+        "Must be 25-65 years old, or have a qualifying child.",
+        "Income within EITC limits based on family size."
+      ]
+    },
+    {
+      "program": "Fuel Assistance (LIHEAP)",
+      "description": "Low-Income Home Energy Assistance Program helps low-income households with winter heating costs.",
+      "benefits": [
+        "Payments towards winter heating bills.",
+        "Energy audits and assistance with energy-saving measures."
+      ],
+      "contact_info": {
+        "agency": "Community Action Agencies in Massachusetts",
+        "phone": "1-617-357-6012 (Boston ABCD)"
+      },
+      "links_to_apply": [
+        "https://www.bostonabcd.org/energy",
+        "https://www.mass.gov/info-details/learn-about-home-energy-assistance-heap"
+      ],
+      "eligibility_criteria": [
+        "Household income must be at or below 60% of the state median income.",
+        "Homeowners and renters are eligible.",
+        "Must be a Massachusetts resident."
+      ]
+    },
+    {
+      "program": "Emergency Assistance (EA)",
+      "description": "A state-funded program providing emergency shelter and assistance finding permanent housing for homeless families.",
+      "benefits": [
+        "Access to emergency shelter.",
+        "Assistance with finding permanent housing."
+      ],
+      "contact_info": {
+        "agency": "Massachusetts Department of Housing and Community Development (DHCD)",
+        "phone": "1-866-584-0653"
+      },
+      "links_to_apply": [
+        "https://www.masslegalhelp.org/income-benefits/emergency-shelter"
+      ],
+      "eligibility_criteria": [
+        "Homeless family with children under 21 or a pregnant woman.",
+        "Income must be under 115% of the federal poverty level.",
+        "Must agree to a Re-Housing Plan."
+      ]
+    },
+    {
+      "program": "HomeBASE",
+      "description": "Helps homeless families pay rent for up to 1 year to avoid shelters or to assist with leaving a shelter.",
+      "benefits": [
+        "Funds for first and last month's rent, security deposit, and up to 12 months of rental assistance."
+      ],
+      "contact_info": {
+        "agency": "Massachusetts Department of Housing and Community Development (DHCD)",
+        "phone": "1-866-584-0653"
+      },
+      "links_to_apply": [
+        "https://www.mass.gov/info-details/homebase"
+      ],
+      "eligibility_criteria": [
+        "Must be a homeless family with children under 21 or a pregnant woman.",
+        "Income must be under 115% of the federal poverty level.",
+        "Must be eligible for Emergency Assistance (EA)."
+      ]
+    },
+    {
+      "program": "MassHealth",
+      "description": "Massachusetts' Medicaid and Children's Health Insurance Program providing health benefits to eligible residents.",
+      "benefits": [
+        "Health coverage for doctor visits, hospital stays, prescription drugs, and more."
+      ],
+      "contact_info": {
+        "agency": "MassHealth/Massachusetts Office of Medicaid",
+        "phone": "1-800-841-2900"
+      },
+      "links_to_apply": [
+        "https://www.mass.gov/masshealth"
+      ],
+      "eligibility_criteria": [
+        "Parents of minor children with income up to 133% FPL.",
+        "Children under 19 in families up to 150% FPL.",
+        "Pregnant women up to 200% FPL.",
+        "Disabled adults up to 133% FPL."
+      ]
+    },
+    {
+      "program": "ConnectorCare",
+      "description": "Affordable health insurance plans with low premiums and no deductibles for Massachusetts residents.",
+      "benefits": [
+        "Low-cost health insurance plans with no deductibles.",
+        "Coverage for doctor visits, hospital stays, and prescription drugs."
+      ],
+      "contact_info": {
+        "agency": "Massachusetts Health Connector",
+        "phone": "1-877-623-6765"
+      },
+      "links_to_apply": [
+        "https://www.mahealthconnector.org"
+      ],
+      "eligibility_criteria": [
+        "Income between 133.1% and 300% of the Federal Poverty Level (FPL).",
+        "Must not be eligible for MassHealth.",
+        "Must be a Massachusetts resident."
+      ]
+    },
+    {
+      "program": "Residential Assistance for Families in Transition (RAFT)",
+      "description": "A homelessness prevention program that helps families avoid homelessness by providing financial assistance for housing-related expenses.",
+      "benefits": [
+        "Up to $4,000 for rent, moving costs, utility arrears, and other housing expenses."
+      ],
+      "contact_info": {
+        "agency": "Department of Housing and Community Development (DHCD)",
+        "phone": "1-800-224-5124"
+      },
+      "links_to_apply": [
+        "https://www.mass.gov/hed/housing/stabilization/residential-assistance-for-families-in-transition"
+      ],
+      "eligibility_criteria": [
+        "Family with children under 21 or a pregnant woman.",
+        "Household income must be at or below 50% of Area Median Income (AMI).",
+        "Must demonstrate that assistance will stabilize housing."
+      ]
+    },
+    {
+      "program": "Unemployment Insurance (UI)",
+      "description": "Temporary cash benefits for individuals who lost their job through no fault of their own.",
+      "benefits": [
+        "Up to 50% of prior weekly pay, with a maximum of $742 plus $25 per dependent child per week."
+      ],
+      "contact_info": {
+        "agency": "Massachusetts Department of Unemployment Assistance (DUA)",
+        "phone": "1-877-626-6800"
+      },
+      "links_to_apply": [
+        "https://www.mass.gov/dua"
+      ],
+      "eligibility_criteria": [
+        "Must have worked approximately 15 weeks in the past 15 months.",
+        "Must be actively looking for work and able to work."
+      ]
+    },
+    {
+      "program": "Worker’s Compensation",
+      "description": "Compensation for workers injured on the job or for families of workers who die due to work-related injuries.",
+      "benefits": [
+        "60% of gross weekly wage for temporary total incapacity.",
+        "67% of wage for permanent total incapacity."
+      ],
+      "contact_info": {
+        "agency": "Office of Claims Administration, Department of Industrial Accidents (DIA)",
+        "phone": "1-800-323-3249"
+      },
+      "links_to_apply": [
+        "https://www.mass.gov/lwd/workers-compensation/"
+      ],
+      "eligibility_criteria": [
+        "Must have lost 5 partial or full working days due to injury.",
+        "Injury must be work-related."
+      ]
+    }
+  ]
+  
