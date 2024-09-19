@@ -18,6 +18,7 @@ import { Session } from '@/lib/types'
 import Image from 'next/image'
 
 async function UserOrLogin() {
+  return ""
   const session = (await auth()) as Session
   return (
     <>
@@ -62,7 +63,7 @@ export function Header() {
           target="_blank"
           className={cn(buttonVariants())}
         >
-        <Image alt='link-health-logo' src={"https://i0.wp.com/link-health.org/wp-content/uploads/2023/10/Link-Health-Logo1.png?fit=360%2C360&ssl=1"} height={30} width={30}/>
+        {/* <Image alt='link-health-logo' src={"https://i0.wp.com/link-health.org/wp-content/uploads/2023/10/Link-Health-Logo1.png?fit=360%2C360&ssl=1"} height={30} width={30}/> */}
           <span className="hidden sm:block">Link Health</span>
           <span className="sm:hidden">Link Health</span>
         </a>
